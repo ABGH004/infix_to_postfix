@@ -4,6 +4,9 @@
 #include <sstream>
 #include <cmath>
 #include <cstring>
+#include "supportLib.hpp"
+#include "pbPlots.hpp"
+#include <vector>
 std::stack<std::string> operators;
 std::string postExpr;
 void precedence(std::string op1, std::string op2)
@@ -201,13 +204,25 @@ int in_to_post(std::string expr, int xval)
 }
 int main()
 {
-	std::string input;
-   	std::getline(std::cin, input); 
-	std::cout << in_to_post(input) << std::endl;
+	//std::string input;
+   	//std::getline(std::cin, input); 
+	//std::cout << in_to_post(input) << std::endl;
 
 	std::string input2;
 	std::getline(std::cin, input2);
+	RGBABitmapImageReference *imageRef = CreateRGBABitmapImageReference();
+	StringReference *errorMessage = CreateStringReferenceLengthValue(0, L' ');
+	std::vector<double> x;
+	std::vector<double> y;
 	for( int i = 1; i <= 20; ++i)
-		std::cout << in_to_post(input2, i) << std::endl;
+	{
+		x.push_back(i);
+		y.push_back(in_to_post(input2, i));
+	}
+	DrawScatterPlot(imageRef, 600, 400, &x, &y, errorMessage);
+	std::vector<double> *pngData = ConvertToPNG(imageRef->image);
+	WriteToFile(pngData, "plot.png");
+	DeleteImage(imageRef->image);
+
 	return 0;
 }
