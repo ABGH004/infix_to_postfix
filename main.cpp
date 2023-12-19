@@ -7,10 +7,12 @@
 #include "supportLib.hpp"
 #include "pbPlots.hpp"
 #include <vector>
+#include <algorithm>
 
 // global variables
 std::stack<std::string> operators;
 std::string postExpr;
+
 
 // finding precedence of operators and
 // adding them to stack and new postfix equation
@@ -280,6 +282,8 @@ double in_to_post(std::string expr)
 
 }
 
+
+
 //parsing equation and calculating result for given value of x
 double in_to_post(std::string expr, int xval)
 {
@@ -311,7 +315,28 @@ double in_to_post(std::string expr, int xval)
 		postExpr += (operators.top() + " ");
 		operators.pop();
 	}
+
 	return calc(postExpr);
+
+}
+
+
+std::string replace_all( std::string str, const std::string& from, const std::string& to )
+{
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+    }
+    return str;
+}
+
+void print_para_postfix( std::string input )
+{
+	int i = 1;
+	in_to_post(input, i);
+	std::string xPostExpr = replace_all(postExpr, std::to_string(i), "x");
+	std::cout << xPostExpr << std::endl;
 
 }
 
@@ -324,21 +349,25 @@ int main()
 	if(input.find("x") == -1)
 		std::cout << in_to_post(input) << std::endl;
 	
-	else{
-		
+	else
+	{
+		const int HEIGHT = 1000;
+		const int WIDTH = 800;
+		const int LEFT_BOUND = -50;
+		const int RIGHT_BOUND = 50;
+		print_para_postfix(input);
 		RGBABitmapImageReference *imageRef = CreateRGBABitmapImageReference();
 		StringReference *errorMessage = CreateStringReferenceLengthValue(0, L' ');
 		
 		std::vector<double> x;
 		std::vector<double> y;
 		
-		for( int i = -30; i <= 30; ++i)
+		for( int i = LEFT_BOUND; i <= RIGHT_BOUND; ++i)
 		{
 			x.push_back(i);
 			y.push_back(in_to_post(input, i));
 		}
-		
-		DrawScatterPlot(imageRef, 1000, 800, &x, &y, errorMessage);
+		DrawScatterPlot(imageRef, HEIGHT, WIDTH, &x, &y, errorMessage);
 		
 		std::vector<double> *pngData = ConvertToPNG(imageRef->image);
 		
