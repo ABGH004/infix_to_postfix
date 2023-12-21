@@ -21,7 +21,11 @@ void precedence( std::string op1, std::string op2 )
 	if( op2 == "(" || op2 == "sin" || op2 == "cos" || op2 == "tan" )
 	{
 		if( op1 != ")" )
+		{
+			if( op1 == "sin(" || op1 == "cos(" || op1 == "tan(" )
+				op1.pop_back();
 			operators.push(op1);
+		}
 		else
 		{
 
